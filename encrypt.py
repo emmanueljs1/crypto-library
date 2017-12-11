@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 Created on Sun Dec 10 17:49:22 2017
 
@@ -7,6 +5,7 @@ Created on Sun Dec 10 17:49:22 2017
 """
 
 from random import randint
+from cryptography.fernet import Fernet
 
 
 class Encryptor(object):
@@ -18,6 +17,8 @@ class Encryptor(object):
         for _ in range(length):
             self.seed += [1 if randint(0, 1) == 1 else 0]
         self.tap = randint(0, length)
+        self.key = Fernet.generate_key()
+        self.fernet = Fernet(self.key)
 
     @classmethod
     def encryptor_from_seed_and_tap(cls, seed, tap):
@@ -66,14 +67,14 @@ class Encryptor(object):
             for _ in range(7):
                 if index >= len(s) or (s[index] != '1' and s[index] != '0'):
                     raise Exception("string not a binary encoding")
-                
+
                 bits += s[index]
                 index += 1
             decoded += chr(int(bits, 2))
 
         return decoded
 
-    def decrypt(self, s):
+    def decrypt_LFSR(self, s):
         ''' uses the encryptor to decrypt a stirng previously
             encrypted using the encryptor '''
         bits = self.pseudorandom_bits()
@@ -84,7 +85,7 @@ class Encryptor(object):
 
         return self.__decode(decrypted)
 
-    def __call__(self, s):
+    def encrypt_LFSR(self, s):
         ''' uses the encryptor to encrypt the string s
             into a string of 1s and 0s '''
         bits = self.pseudorandom_bits()
@@ -96,8 +97,17 @@ class Encryptor(object):
 
         return encrypted
 
+    def decrypt(self, s):
+        return self.fernet.decrypt(s.encode('utf-8')).decode('utf-8')
+
+    def encrypt(self, s):
+        return self.fernet.encrypt(s.encode('utf-8')).decode('utf-8')
+
     def __str__(self):
-        return "Encryptor w/ seed {} & tap pos {}".format(self.seed, self.tap)
+        s = self.seed
+        k = self.key
+        t = self.tap
+        return "Encryptor w/ seed {}, tap pos {}, key {}".format(s, t, k)
 
     def __repr__(self):
         return str(self)
@@ -107,3 +117,11 @@ class Encryptor(object):
         ''' uses pseudorandom bits generated using LFSR to encrypt s '''
         encryptor = Encryptor.encryptor_from_seed_and_tap(seed, tap)
         return encryptor(s)
+
+if __name__ == '__main__':
+    encryptor = Encryptor()
+    s = "'hello'"
+    print(s, end=" ")
+    print("encrypts to '{}'".format(encryptor.encrypt(s)), end=" ")
+    print("with cryptography lib and to", end=" ")
+    print("'{}' with LFSR".format(encryptor.encrypt_LFSR(s)))
