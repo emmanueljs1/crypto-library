@@ -6,6 +6,7 @@ Created on Sun Dec 10 17:49:22 2017
 
 from random import randint
 from cryptography.fernet import Fernet
+from Crypto.Cipher import AES
 
 
 class Encryptor(object):
@@ -14,11 +15,19 @@ class Encryptor(object):
         ''' an encryptor is initialized with a random seed and tap position '''
         length = randint(15, 30)
         self.seed = []
+        seed_str = ''
         for _ in range(length):
-            self.seed += [1 if randint(0, 1) == 1 else 0]
-        self.tap = randint(0, length)
+            bit = 1 if randint(0, 1) == 1 else 0
+            self.seed += [bit]
+            seed_str += '{}'.format(bit)
+        self.tap = randint(0, length - 1)
         self.key = Fernet.generate_key()
         self.fernet = Fernet(self.key)
+
+        self.AES_key = ''
+
+        for _ in range(16):
+            self.AES_key += str(randint(0, 9))
 
     @classmethod
     def encryptor_from_seed_and_tap(cls, seed, tap):
@@ -52,6 +61,7 @@ class Encryptor(object):
             yield new_bit
 
     def __encode(self, s):
+        ''' encode a string into binary '''
         bin_str = ''
 
         for byte in bytes(s, 'utf-8'):
@@ -60,6 +70,7 @@ class Encryptor(object):
         return bin_str
 
     def __decode(self, s):
+        ''' decode a string from binary '''
         index = 0
         decoded = ''
         while index < len(s):
@@ -97,6 +108,21 @@ class Encryptor(object):
 
         return encrypted
 
+    def encrypt_AES(self, s):
+        ''' encrypts the string s using AES '''
+        padding = len(s) % 16
+        for _ in range(16 - padding):
+            s += ' '
+
+        cipher = AES.new(self.AES_key, AES.MODE_CBC, 'This is an IV456')
+
+        return cipher.encrypt(s)
+
+    def decrypt_AES(self, s):
+        ''' decrypts the string s using AES '''
+        cipher = AES.new(self.AES_key, AES.MODE_CBC, 'This is an IV456')
+        return cipher.decrypt(s).decode('utf-8')
+
     def decrypt(self, s):
         return self.fernet.decrypt(s.encode('utf-8')).decode('utf-8')
 
@@ -105,9 +131,10 @@ class Encryptor(object):
 
     def __str__(self):
         s = self.seed
-        k = self.key
+        k1 = self.key
         t = self.tap
-        return "Encryptor w/ seed {}, tap pos {}, key {}".format(s, t, k)
+        k2 = self.AES_key
+        return "seed {}, tap pos {}, key {}, AES key: {}".format(s, t, k1, k2)
 
     def __repr__(self):
         return str(self)
@@ -124,4 +151,5 @@ if __name__ == '__main__':
     print(s, end=" ")
     print("encrypts to '{}'".format(encryptor.encrypt(s)), end=" ")
     print("with cryptography lib and to", end=" ")
-    print("'{}' with LFSR".format(encryptor.encrypt_LFSR(s)))
+    print("'{}' with LFSR and to".format(encryptor.encrypt_LFSR(s)), end=" ")
+    print("'{}' with AES".format(encryptor.encrypt_AES(s)))
