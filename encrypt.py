@@ -22,7 +22,7 @@ class Encryptor(object):
             self.seed += [bit]
             seed_str += '{}'.format(bit)
         self.tap = randint(0, length - 1)
-        self.key = Fernet.generate_key()
+        self.key = Fernet.generate_key().decode('utf-8')
         self.AES_key = ''
 
         for _ in range(16):
@@ -79,14 +79,14 @@ class Encryptor(object):
     def decrypt_with_sac(self, key, s):
         ''' decrypts using symmetric authenticated cryptography
             with given key '''
-        fernet = Fernet(key)
+        fernet = Fernet(key.encode('utf-8'))
         return fernet.decrypt(s.encode('utf-8')).decode('utf-8')
 
     @classmethod
     def encrypt_with_sac(self, key, s):
         ''' decrypts using symmetric authenticated cryptography
             with given key '''
-        fernet = Fernet(key)
+        fernet = Fernet(key.encode('utf-8'))
         return fernet.encrypt(s.encode('utf-8')).decode('utf-8')
 
     def decrypt(self, s):

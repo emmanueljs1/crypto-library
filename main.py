@@ -7,7 +7,6 @@ Created on Sun Dec 10 17:28:53 2017
 """
 
 from flask import Flask, render_template, flash, request
-from wtforms import Form, TextField, TextAreaField, validators, StringField, SubmitField
 from functools import reduce
 import logging
 from encrypt import Encryptor
