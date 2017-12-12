@@ -41,7 +41,9 @@ def process_form():
 
             encryptor = Encryptor()
             encrypted_text = encryptor.encrypt_LFSR(text)
-            
+            seed = encryptor.seed
+            tap = encryptor.tap
+
             # we need to give the user the seed and tap as well
             
             # TODO: ask the user if they want to encrypt with AES or 
@@ -49,7 +51,7 @@ def process_form():
 
             # if encrypt_form.validate():
             if len(text) > 0:
-                flash('Encrypting in Process!', 'encrypt')
+                flash('Encryption Result: {}\n Seed:\n {} Tap: {} '.format(encrypted_text, seed, tap) , 'encrypt')
             else:
                 flash('Error: All the form fields are required. ', 'encrypt')
             decrypt_form = None
@@ -69,7 +71,7 @@ def process_form():
 
             # if decrypt_form.validate():
             if len(text) > 0:
-                flash('Decryption Result:' + text, 'decrypt')
+                flash('Decryption Result:' + decrypted, 'decrypt')
             else:
                 flash('Error: All the form fields are required. ', 'decrypt')
             encrypt_form = None
