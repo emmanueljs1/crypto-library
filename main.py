@@ -48,11 +48,11 @@ def process_form():
 def encrypt_decrypt():
     global encryption_algorithm
     global decryption_algorithm
-    result = dict()
+    encr_result = dict()
+    decr_result = dict()
+    
     if request.method == 'POST':
         request_dict = request.form.to_dict()
-   
-
         if 'encrypt' in request.form:
 
             text = request_dict['encrypt']
@@ -68,10 +68,10 @@ def encrypt_decrypt():
 
                 seed = reduce(app, encryptor.seed)            
                 tap = encryptor.tap
-                
-                result['encrypted_text'] = encrypted_text
-                result['seed'] = seed
-                result['tap'] = tap
+
+                encr_result['encrypted'] = encrypted_text
+                encr_result['seed'] = seed
+                encr_result['tap'] = tap
 
                 if len(text) > 0:
                     flash('Encryption Result: {}\n Seed:{} \n Tap: {} \n '.format(encrypted_text, seed, tap) , 'encrypt')
@@ -83,8 +83,8 @@ def encrypt_decrypt():
                 encrypted_text = encryptor.encrypt_AES(text)
                 key = encryptor.AES_key
 
-                result['encrypted_text'] = encrypted_text
-                result['key'] = key
+                encr_result['encrypted'] = encrypted_text
+                encr_result['key'] = key
 
                 if len(text) > 0:
                     flash('Encryption Result: {}\n Key: {}\n '.format(encrypted_text, key) , 'encrypt')
@@ -96,8 +96,8 @@ def encrypt_decrypt():
                 encrypted_text = encryptor.encrypt(text)
                 key = encryptor.key
 
-                result['encrypted_text'] = encrypted_text
-                result['key'] = key
+                encr_result['encrypted'] = encrypted_text
+                encr_result['key'] = key
 
                 if len(text) > 0:
                     flash('Encryption Result: {}\n Key: {}\n '.format(encrypted_text, key) , 'encrypt')
@@ -107,7 +107,7 @@ def encrypt_decrypt():
         else:
             text = request_dict['decrypt']           
 
-            if encryption_algorithm is "LFSR":
+            if decryption_algorithm == "LFSR":
         
                 seed = request_dict['seed']
                 tap = request_dict['tap']
@@ -119,7 +119,7 @@ def encrypt_decrypt():
                 else:
                     flash('Error: All the form fields are required. ', 'decrypt')
 
-            elif encryption_algorithm is "AES":
+            elif decryption_algorithm == "AES":
 
                 key = request_dict['key']
                 decrypted = Encryptor.decrypt_with_aes(key, text)
@@ -138,10 +138,11 @@ def encrypt_decrypt():
                     flash('Decryption Result: {}\n'.format(decrypted) , 'decrypt')
                 else:
                     flash('Error: All the form fields are required. ', 'decrypt')
-    
-    
+            
+    print(encr_result)
     crypto_list = ['LFSR', 'AES', 'Symmetric Authenticated Cryptography']
-    return render_template('index.html', encrypt_alg=encryption_algorithm, decrypt_alg=encryption_algorithm, result=result, crypto_list=crypto_list)
+    return render_template('index.html', encrypt_alg=encryption_algorithm, encr_result=encr_result, decr_result=decr_result,
+                            decrypt_alg=encryption_algorithm, crypto_list=crypto_list)
 
 
 def main():
