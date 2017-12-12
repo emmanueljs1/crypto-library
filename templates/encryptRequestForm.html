@@ -19,25 +19,32 @@
     <button type="submit" class="btn btn-success">Encrypt</button>
   </form>
   <br>
-
-    {% with messages = get_flashed_messages(category_filter=['encrypt']) %}
-        {% if messages %}
-
-    {% for message in messages %}
-        {% if "Error" not in message: %}
-            <div class="alert alert-info">
-            {{ message }}
-            </div>
-        {% endif %}
-
-        {% if "Error" in message: %}
-            <div class="alert alert-warning">
-            {{ message }}
-            </div>
-        {% endif %}
+  {% if  encr_result %}
+   <div id="encryption_results" class="alert alert-info">
+    {% for key, value in encr_result.items() %}
+      <div>{{ key }}: {{ value }}</div>
     {% endfor %}
-        {% endif %}
-    {% endwith %}
+    </div>
+  {% endif %}
+  <br>
+  {% with messages = get_flashed_messages(category_filter=['encrypt']) %}
+      {% if messages %}
+
+  {% for message in messages %}
+      {% if "Error" not in message: %}
+          <div class="alert alert-info">
+          {{ message }}
+          </div>
+      {% endif %}
+
+      {% if "Error" in message: %}
+          <div class="alert alert-warning">
+          {{ message }}
+          </div>
+      {% endif %}
+  {% endfor %}
+      {% endif %}
+  {% endwith %}
 
 {% endblock %}
 

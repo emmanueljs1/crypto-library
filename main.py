@@ -16,6 +16,8 @@ app = Flask(__name__)
  
 encryption_algorithm = ""
 decryption_algorithm = ""
+encr_result = dict()
+decr_result = dict()
 
 @app.route("/process_form", methods=['POST'])
 def process_form():
@@ -41,15 +43,16 @@ def process_form():
     encryption_algorithm = encrypt_alg
     decryption_algorithm = decrypt_alg
 
-    return render_template('index.html', encrypt_alg=encrypt_alg, decrypt_alg=decrypt_alg, crypto_list=crypto_list)
+    return render_template('index.html', encrypt_alg=encrypt_alg, decrypt_alg=decrypt_alg, 
+                            encr_result=encr_result, decr_result=decr_result, crypto_list=crypto_list)
  
 
 @app.route("/", methods=['GET', 'POST'])
 def encrypt_decrypt():
     global encryption_algorithm
     global decryption_algorithm
-    encr_result = dict()
-    decr_result = dict()
+    global encr_result
+    global decr_result
     
     if request.method == 'POST':
         request_dict = request.form.to_dict()
@@ -69,13 +72,12 @@ def encrypt_decrypt():
                 seed = reduce(app, encryptor.seed)            
                 tap = encryptor.tap
 
-                encr_result['encrypted'] = encrypted_text
-                encr_result['seed'] = seed
-                encr_result['tap'] = tap
+                encr_result['Encryption Result'] = encrypted_text
+                encr_result['Seed'] = seed
+                encr_result['Tap'] = tap
 
-                if len(text) > 0:
-                    flash('Encryption Result: {}\n Seed:{} \n Tap: {} \n '.format(encrypted_text, seed, tap) , 'encrypt')
-                else:
+                if len(text) < 0:
+                   
                     flash('Error: All the form fields are required. ', 'encrypt')
 
             elif encryption_algorithm == "AES":
@@ -83,12 +85,11 @@ def encrypt_decrypt():
                 encrypted_text = encryptor.encrypt_AES(text)
                 key = encryptor.AES_key
 
-                encr_result['encrypted'] = encrypted_text
-                encr_result['key'] = key
+                encr_result['Encryption Result'] = encrypted_text
+                encr_result['Key'] = key
 
-                if len(text) > 0:
-                    flash('Encryption Result: {}\n Key: {}\n '.format(encrypted_text, key) , 'encrypt')
-                else:
+                if len(text) < 0:
+                
                     flash('Error: All the form fields are required. ', 'encrypt')
 
             else:
@@ -96,12 +97,11 @@ def encrypt_decrypt():
                 encrypted_text = encryptor.encrypt(text)
                 key = encryptor.key
 
-                encr_result['encrypted'] = encrypted_text
-                encr_result['key'] = key
+                encr_result['Encryption Result'] = encrypted_text
+                encr_result['Key'] = key
 
-                if len(text) > 0:
-                    flash('Encryption Result: {}\n Key: {}\n '.format(encrypted_text, key) , 'encrypt')
-                else:
+                if len(text) < 0:
+                    
                     flash('Error: All the form fields are required. ', 'encrypt')
     
         else:
