@@ -33,3 +33,6 @@ any of its encrypt_* methods
 -- Additional notes --
 
 The project is forward compatible (was not during demo)
+
+Note: you must press select to actually select a new encryption/decryption algorithm
+before encrypting/decrypting

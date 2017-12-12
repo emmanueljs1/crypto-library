@@ -23,7 +23,9 @@ def process_form():
 
     global encryption_algorithm
     global decryption_algorithm
-    
+    global encr_result
+    global decr_result
+
     decrypt_alg = "LFSR"
     encrypt_alg = "LFSR"
 
@@ -32,6 +34,7 @@ def process_form():
 
         if 'encryption_select' in request.form:
             encrypt_alg = request_dict['encryption_select']
+            encr_result = dict()
  
         elif 'decryption_select' in request.form:
             decrypt_alg = request_dict['decryption_select']
@@ -52,6 +55,9 @@ def encrypt_decrypt():
     global decryption_algorithm
     global encr_result
     global decr_result
+
+    encr_result = dict()
+    decr_result = dict()
     
     if request.method == 'POST':
         request_dict = request.form.to_dict()
@@ -138,7 +144,6 @@ def encrypt_decrypt():
                 else:
                     flash('Error: All the form fields are required. ', 'decrypt')
             
-    print(encr_result)
     crypto_list = ['LFSR', 'AES', 'Symmetric Authenticated Cryptography']
     return render_template('index.html', encrypt_alg=encryption_algorithm, encr_result=encr_result, decr_result=decr_result,
                             decrypt_alg=encryption_algorithm, crypto_list=crypto_list)

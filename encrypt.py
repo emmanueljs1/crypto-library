@@ -79,25 +79,27 @@ class Encryptor(object):
     def decrypt_with_sac(self, key, s):
         ''' decrypts using symmetric authenticated cryptography
             with given key '''
-        fernet = Fernet(key.encode('utf-8'))
+        fernet = Fernet(key)
         return fernet.decrypt(s.encode('utf-8')).decode('utf-8')
 
     @classmethod
     def encrypt_with_sac(self, key, s):
         ''' decrypts using symmetric authenticated cryptography
             with given key '''
-        fernet = Fernet(key.encode('utf-8'))
+        fernet = Fernet(key)
         return fernet.encrypt(s.encode('utf-8')).decode('utf-8')
 
     def decrypt(self, s):
         ''' decrypts using symmetric authenticated cryptography
             with encryptor's key '''
-        return Encryptor.decrypt_with_sac(self.key, s)
+        key = self.key.encode('utf-8')
+        return Encryptor.decrypt_with_sac(key, s)
 
     def encrypt(self, s):
         ''' encrypts using symmetric authenticated cryptography
             with encryptor's key '''
-        return Encryptor.encrypt_with_sac(self.key, s)
+        key = self.key.encode('utf-8')
+        return Encryptor.encrypt_with_sac(key, s)
 
     def pseudorandom_bits(self):
         ''' creates a pseudorandom bit generator (based on LFSR) '''
