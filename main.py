@@ -108,7 +108,7 @@ def encrypt_decrypt():
                 decrypted = Encryptor.decrypt_with_lfsr(seed, int(tap), text)
                
                 if len(text) > 0:
-                    flash('Decryption Result: {}\n'.format(encrypted_text) , 'decrypt')
+                    flash('Decryption Result: {}\n'.format(decrypted) , 'decrypt')
                 else:
                     flash('Error: All the form fields are required. ', 'decrypt')
 

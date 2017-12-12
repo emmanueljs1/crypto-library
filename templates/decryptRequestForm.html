@@ -1,0 +1,50 @@
+{% block content %}
+<div class="container">
+  <h2>Decrypt</h2>
+  <form action="/process_form" method="post">
+    <div class="col-sm-4 col-lg-4 col-md-4">
+        <select class="form-control" name="decryption_select">
+          {% for x in crypto_list %}
+            <option value="{{ x }}"{% if loop.first %} SELECTED{% endif %}>{{ x }}</option>
+          {% endfor %}
+        </select>
+        <button type="submit" class="btn btn-success">Select</button>
+    </div>
+  </form>
+  <form action="/" method="post" role="form">
+    <div class="form-group">
+      <label for="text">Content to Decrypt:</label>
+      {% if decrypt_alg == "LFSR" %}
+          <textarea cols="40" rows="5" type="text" class="form-control" name="decrypt" placeholder="Content to Decrypt"></textarea>
+          <input name ="seed">seed</option>
+          <input name ="tap">tap</option>
+      {% else %}
+          <textarea cols="40" rows="5" type="text" class="form-control" name="decrypt" placeholder="Content to Decrypt"></textarea>
+          <input name ="key">key</option>
+      {% endif %}
+      <br>
+    </div>
+    <button type="submit" class="btn btn-success">Decrypt</button>
+  </form>
+  <br>
+
+    {% with messages = get_flashed_messages(category_filter=['decrypt']) %}
+        {% if messages %}
+
+    {% for message in messages %}
+        {% if "Error" not in message: %}
+            <div class="alert alert-info">
+            {{ message }}
+            </div>
+        {% endif %}
+
+        {% if "Error" in message: %}
+            <div class="alert alert-warning">
+            {{ message }}
+            </div>
+        {% endif %}
+    {% endfor %}
+        {% endif %}
+    {% endwith %}
+</div>
+{% endblock %}
