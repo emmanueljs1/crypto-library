@@ -10,7 +10,7 @@ from flask import Flask, render_template, flash, request
 # from flask_wtf import Form as FlaskForm
 from wtforms import Form, TextField, TextAreaField, validators, StringField, SubmitField
 import logging
-
+from encrypt import Encryptor
 app = Flask(__name__)
 
  
@@ -37,9 +37,15 @@ def process_form():
 
             encrypt_dict = request.form.to_dict()
             text = encrypt_dict['encrypt']
-            print text
+            print(text)
 
-            # ADD ENCRYPTION CODE HERE
+            encryptor = Encryptor()
+            encrypted_text = encryptor.encrypt_LFSR(text)
+            
+            # we need to give the user the seed and tap as well
+            
+            # TODO: ask the user if they want to encrypt with AES or 
+            # symmetric authenticated cryptography
 
             # if encrypt_form.validate():
             if len(text) > 0:
@@ -51,9 +57,15 @@ def process_form():
             
             decrypt_dict = request.form.to_dict()
             text = decrypt_dict['decrypt']
-            print text
+            print(text)
 
-            # ADD DECRYPTION CODE HERE
+            # TODO: ask the user if they want to decrypt with AES or 
+            # symmetric authenticated cryptography
+
+            seed = '' # user needs to provide seed online as well
+            tap = 0 # user needs to provide tap position as well
+            
+            decrypted = Encryptor.decrypt_with_lfsr(seed, tap, text)
 
             # if decrypt_form.validate():
             if len(text) > 0:

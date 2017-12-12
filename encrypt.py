@@ -143,13 +143,20 @@ class Encryptor(object):
     def encrypt_with_lfsr(cls, seed, tap, s):
         ''' uses pseudorandom bits generated using LFSR to encrypt s '''
         encryptor = Encryptor.encryptor_from_seed_and_tap(seed, tap)
-        return encryptor(s)
+        return encryptor.encrypt_LFSR(s)
+    
+    @classmethod
+    def decrypt_with_lfsr(cls, seed, tap, s):
+        ''' uses pseudorandom bits generated using LFSR to decrypt s '''
+        encryptor = Encryptor.encryptor_from_seed_and_tap(seed, tap)
+        return encryptor.decrypt_LFSR(s)
+    
 
 if __name__ == '__main__':
     encryptor = Encryptor()
     s = "'hello'"
     print(s, end=" ")
     print("encrypts to '{}'".format(encryptor.encrypt(s)), end=" ")
-    print("with cryptography lib and to", end=" ")
+    print("with symmetric authenticated cryptography and to", end=" ")
     print("'{}' with LFSR and to".format(encryptor.encrypt_LFSR(s)), end=" ")
     print("'{}' with AES".format(encryptor.encrypt_AES(s)))
