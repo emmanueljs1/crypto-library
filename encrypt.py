@@ -22,8 +22,6 @@ class Encryptor(object):
             seed_str += '{}'.format(bit)
         self.tap = randint(0, length - 1)
         self.key = Fernet.generate_key()
-        self.fernet = Fernet(self.key)
-
         self.AES_key = ''
 
         for _ in range(16):
@@ -51,6 +49,54 @@ class Encryptor(object):
         encryptor.seed = seed_arr
         encryptor.tap = tap
         return encryptor
+
+    @classmethod
+    def encrypt_with_aes(cls, AES_key, s):
+        ''' encrypts using AES with given key '''
+        padded_s = s[:]
+        padding = len(s) % 16
+        for _ in range(16 - padding):
+            padded_s += ' '
+        cipher = AES.new(AES_key, AES.MODE_CBC, 'This is an IV456')
+        return cipher.encrypt(padded_s)
+
+    @classmethod
+    def decrypt_with_aes(cls, AES_key, s):
+        ''' decrypts using AES with given key '''
+        cipher = AES.new(AES_key, AES.MODE_CBC, 'This is an IV456')
+        return cipher.decrypt(s).decode('utf-8')
+
+    def encrypt_AES(self, s):
+        ''' encrypts the string s using encryptor's AES '''
+        return Encryptor.encrypt_with_aes(self.AES_key, s)
+
+    def decrypt_AES(self, s):
+        ''' decrypts the string s using encryptor's AES '''
+        return Encryptor.decrypt_with_aes(self.AES_key, s)
+
+    @classmethod
+    def decrypt_with_sac(self, key, s):
+        ''' decrypts using symmetric authenticated cryptography
+            with given key '''
+        fernet = Fernet(key)
+        return fernet.decrypt(s.encode('utf-8')).decode('utf-8')
+
+    @classmethod
+    def encrypt_with_sac(self, key, s):
+        ''' decrypts using symmetric authenticated cryptography
+            with given key '''
+        fernet = Fernet(key)
+        return fernet.encrypt(s.encode('utf-8')).decode('utf-8')
+
+    def decrypt(self, s):
+        ''' decrypts using symmetric authenticated cryptography
+            with encryptor's key '''
+        return Encryptor.decrypt_with_sac(self.key, s)
+
+    def encrypt(self, s):
+        ''' encrypts using symmetric authenticated cryptography
+            with encryptor's key '''
+        return Encryptor.encrypt_with_sac(self.key, s)
 
     def pseudorandom_bits(self):
         ''' creates a pseudorandom bit generator (based on LFSR) '''
@@ -108,55 +154,37 @@ class Encryptor(object):
 
         return encrypted
 
-    def encrypt_AES(self, s):
-        ''' encrypts the string s using AES '''
-        padding = len(s) % 16
-        for _ in range(16 - padding):
-            s += ' '
-
-        cipher = AES.new(self.AES_key, AES.MODE_CBC, 'This is an IV456')
-
-        return cipher.encrypt(s)
-
-    def decrypt_AES(self, s):
-        ''' decrypts the string s using AES '''
-        cipher = AES.new(self.AES_key, AES.MODE_CBC, 'This is an IV456')
-        return cipher.decrypt(s).decode('utf-8')
-
-    def decrypt(self, s):
-        return self.fernet.decrypt(s.encode('utf-8')).decode('utf-8')
-
-    def encrypt(self, s):
-        return self.fernet.encrypt(s.encode('utf-8')).decode('utf-8')
-
-    def __str__(self):
-        s = self.seed
-        k1 = self.key
-        t = self.tap
-        k2 = self.AES_key
-        return "seed {}, tap pos {}, key {}, AES key: {}".format(s, t, k1, k2)
-
-    def __repr__(self):
-        return str(self)
-
     @classmethod
     def encrypt_with_lfsr(cls, seed, tap, s):
         ''' uses pseudorandom bits generated using LFSR to encrypt s '''
         encryptor = Encryptor.encryptor_from_seed_and_tap(seed, tap)
         return encryptor.encrypt_LFSR(s)
-    
+
     @classmethod
     def decrypt_with_lfsr(cls, seed, tap, s):
         ''' uses pseudorandom bits generated using LFSR to decrypt s '''
         encryptor = Encryptor.encryptor_from_seed_and_tap(seed, tap)
         return encryptor.decrypt_LFSR(s)
-    
+
+    def __str__(self):
+        s = self.seed
+        k = self.key
+        t = self.tap
+        q = self.AES_key
+        return "seed: {}\ntap: {}\nSAC key: {}\nAES key: {}".format(s, t, k, q)
+
+    def __repr__(self):
+        return str(self)
 
 if __name__ == '__main__':
     encryptor = Encryptor()
-    s = "'hello'"
+    s = "hello"
     print(s, end=" ")
-    print("encrypts to '{}'".format(encryptor.encrypt(s)), end=" ")
+    SAC_token = encryptor.encrypt(s)
+    print("encrypts to '{}'".format(SAC_token), end=" ")
     print("with symmetric authenticated cryptography and to", end=" ")
-    print("'{}' with LFSR and to".format(encryptor.encrypt_LFSR(s)), end=" ")
-    print("'{}' with AES".format(encryptor.encrypt_AES(s)))
+    LFSR_token = encryptor.encrypt_LFSR(s)
+    print("'{}' with LFSR and to".format(LFSR_token), end=" ")
+    AES_token = encryptor.encrypt_AES(s)
+    print("'{}' with AES using".format(AES_token))
+    print(str(encryptor))
