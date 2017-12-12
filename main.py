@@ -64,7 +64,12 @@ def encrypt_decrypt():
             if encryption_algorithm == "LFSR":
             
                 encrypted_text = encryptor.encrypt_LFSR(text)
-                seed = encryptor.seed
+
+                seed = ''
+
+                for num in encryptor.seed:
+                    seed += str(num)
+
                 tap = encryptor.tap
 
                 if len(text) > 0:
