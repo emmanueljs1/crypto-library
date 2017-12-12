@@ -1,11 +1,11 @@
 {% block content %}
-<div class="container">
+
   <h2>Encrypt</h2>
   <form action="/process_form" method="post">
     <div class="col-sm-4 col-lg-4 col-md-4">
         <select class="form-control" name="encryption_select">
           {% for x in crypto_list %}
-            <option value="{{ x }}"{% if loop.first %} SELECTED{% endif %}>{{ x }}</option>
+            <option value="{{ x }}"{% if x == encrypt_alg %} SELECTED{% endif %}>{{ x }}</option>
           {% endfor %}
         </select>
         <button type="submit" class="btn btn-success">Select</button>
@@ -20,6 +20,11 @@
     <button type="submit" class="btn btn-success">Encrypt</button>
   </form>
   <br>
+  <div>
+    {% for result in results %}
+      <div value="{{ result.key()}}">{{result.key()}} {{result.value()}}</div>
+    {% endfor %}
+  </div>
     {% with messages = get_flashed_messages(category_filter=['encrypt']) %}
         {% if messages %}
 
@@ -38,7 +43,7 @@
     {% endfor %}
         {% endif %}
     {% endwith %}
-</div>
+
 {% endblock %}
 
 

@@ -11,11 +11,11 @@ from wtforms import Form, TextField, TextAreaField, validators, StringField, Sub
 from functools import reduce
 import logging
 from encrypt import Encryptor
+
 app = Flask(__name__)
  
 encryption_algorithm = ""
 decryption_algorithm = ""
-
 
 @app.route("/process_form", methods=['POST'])
 def process_form():
@@ -31,11 +31,9 @@ def process_form():
 
         if 'encryption_select' in request.form:
             encrypt_alg = request_dict['encryption_select']
-            print(encrypt_alg)
  
         elif 'decryption_select' in request.form:
             decrypt_alg = request_dict['decryption_select']
-            print(decrypt_alg)
     
     crypto_list = ['LFSR', 'AES', 'Symmetric Authenticated Cryptography']
 
@@ -45,23 +43,22 @@ def process_form():
 
     return render_template('index.html', encrypt_alg=encrypt_alg, decrypt_alg=decrypt_alg, crypto_list=crypto_list)
  
+
 @app.route("/", methods=['GET', 'POST'])
 def encrypt_decrypt():
     global encryption_algorithm
     global decryption_algorithm
-
+    result = dict()
     if request.method == 'POST':
         request_dict = request.form.to_dict()
-        print(request_dict)
+   
 
         if 'encrypt' in request.form:
-            print("encrypt is called")
 
             text = request_dict['encrypt']
             encryptor = Encryptor()
             encrypted_text = ""
 
-            print(encryption_algorithm)
             if encryption_algorithm == "LFSR":
             
                 encrypted_text = encryptor.encrypt_LFSR(text)
@@ -71,6 +68,10 @@ def encrypt_decrypt():
 
                 seed = reduce(app, encryptor.seed)            
                 tap = encryptor.tap
+                
+                result['encrypted_text'] = encrypted_text
+                result['seed'] = seed
+                result['tap'] = tap
 
                 if len(text) > 0:
                     flash('Encryption Result: {}\n Seed:{} \n Tap: {} \n '.format(encrypted_text, seed, tap) , 'encrypt')
@@ -81,6 +82,10 @@ def encrypt_decrypt():
     
                 encrypted_text = encryptor.encrypt_AES(text)
                 key = encryptor.AES_key
+
+                result['encrypted_text'] = encrypted_text
+                result['key'] = key
+
                 if len(text) > 0:
                     flash('Encryption Result: {}\n Key: {}\n '.format(encrypted_text, key) , 'encrypt')
                 else:
@@ -91,6 +96,9 @@ def encrypt_decrypt():
                 encrypted_text = encryptor.encrypt(text)
                 key = encryptor.key
 
+                result['encrypted_text'] = encrypted_text
+                result['key'] = key
+
                 if len(text) > 0:
                     flash('Encryption Result: {}\n Key: {}\n '.format(encrypted_text, key) , 'encrypt')
                 else:
@@ -98,7 +106,6 @@ def encrypt_decrypt():
     
         else:
             text = request_dict['decrypt']           
-            print("decrypt is called")
 
             if encryption_algorithm is "LFSR":
         
@@ -134,7 +141,7 @@ def encrypt_decrypt():
     
     
     crypto_list = ['LFSR', 'AES', 'Symmetric Authenticated Cryptography']
-    return render_template('index.html', encrypt_alg=encryption_algorithm, decrypt_alg=encryption_algorithm, crypto_list=crypto_list)
+    return render_template('index.html', encrypt_alg=encryption_algorithm, decrypt_alg=encryption_algorithm, result=result, crypto_list=crypto_list)
 
 
 def main():

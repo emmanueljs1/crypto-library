@@ -1,11 +1,10 @@
 {% block content %}
-<div class="container">
   <h2>Decrypt</h2>
   <form action="/process_form" method="post">
     <div class="col-sm-4 col-lg-4 col-md-4">
         <select class="form-control" name="decryption_select">
           {% for x in crypto_list %}
-            <option value="{{ x }}"{% if loop.first %} SELECTED{% endif %}>{{ x }}</option>
+            <option value="{{ x }}"{% if x == decrypt_alg %} SELECTED{% endif %}>{{ x }}</option>
           {% endfor %}
         </select>
         <button type="submit" class="btn btn-success">Select</button>
@@ -46,5 +45,4 @@
     {% endfor %}
         {% endif %}
     {% endwith %}
-</div>
 {% endblock %}

@@ -1,15 +1,60 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
   <head>
-      <title>Crypto Library</title>
-     <link rel="stylesheet" media="screen" href ="static/bootstrap.min.css">
-     <link rel="stylesheet" href="static/bootstrap-theme.min.css">
-     <meta name="viewport" content = "width=device-width, initial-scale=1.0">
+    <title>Crypto Library</title>
+    <style>
+      #parent {
+        display: flex;
+      }
+      #form {
+        width: 50%;
+        background: lightblue;
+      }
+       @font-face {
+         font-family: 'ChunkFiveRegular';
+         src: url('Chunkfive-webfont.eot');
+         src: url('Chunkfive-webfont.eot?#iefix') format('embedded-opentype'),
+         url('Chunkfive-webfont.woff') format('woff'),
+         url('Chunkfive-webfont.ttf') format('truetype'),
+         url('Chunkfive-webfont.svg#ChunkFiveRegular') format('svg');
+         font-weight: normal;
+         font-style: normal;
+       }
+      body { font-family: "ChunkFiveRegular" }
+    </style>
+    <link rel="stylesheet" media="screen" href ="static/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <meta name="viewport" content = "width=device-width, initial-scale=1.0">
   </head>
   <body>
     <h1>Crypto Library</h1>
-    {% include 'encryptRequestForm.html' %}
-    <br>
-    {% include 'decryptRequestForm.html' %}
+    <div id='parent'>
+      <div class="container" id='form'>
+        {% include 'encryptRequestForm.html' %}
+      </div>
+      <br>
+      <div class="container" id='form'>
+        {% include 'decryptRequestForm.html' %}
+      </div>
+    </div>
+    <div> 
+
+      LFSR encryption:  <br>
+
+      This algorithm uses a linear feedback shift register (LFSR) created with a random seed to produce pseudorandom bits. It encodes a string into the combination of the binary encodings of all of its characters and then uses the pseudorandom bits to encrypt each of the bits in this encoding into an encrypted encoding.  <br>
+
+      This algorithm is simpler than the rest, and does not work for any special characters (whitespace included)  <br>
+      <br>
+      
+      AES encryption:  <br>
+
+      The advanced encryption standard (AES) or Rijndael was developed by two Belgian cryptographers, it is an encryption algorithm adopted by the US and used worldwide, made available in many encryption packages (e.g. pycrypto in Python). You can read more about it <a href='https://en.wikipedia.org/wiki/Advanced_Encryption_Standard'> here</a> <br>
+
+      <br>
+      Fernet -- Symmetric Authenticated Cryptography:  <br>
+
+      This encryption algorithm involved using the Python pyca/cryptography library's module Fernet, which guarantees that a message encrypted using it cannot be manipulated or read without the key. You can read more about it <a href='https://cryptography.io/en/latest/'> here </a> <br>
+
+    </div>
   </body>
 </html>
