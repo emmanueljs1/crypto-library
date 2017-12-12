@@ -8,6 +8,7 @@ Created on Sun Dec 10 17:28:53 2017
 
 from flask import Flask, render_template, flash, request
 from wtforms import Form, TextField, TextAreaField, validators, StringField, SubmitField
+from functools import reduce
 import logging
 from encrypt import Encryptor
 app = Flask(__name__)
@@ -64,12 +65,11 @@ def encrypt_decrypt():
             if encryption_algorithm == "LFSR":
             
                 encrypted_text = encryptor.encrypt_LFSR(text)
+                
+                def app(s1, s2):
+                    return str(s1) + '{}'.format(s2)
 
-                seed = ''
-
-                for num in encryptor.seed:
-                    seed += str(num)
-
+                seed = reduce(app, encryptor.seed)            
                 tap = encryptor.tap
 
                 if len(text) > 0:
