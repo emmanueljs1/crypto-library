@@ -15,8 +15,12 @@ app = Flask(__name__)
 encryption_algorithm = ""
 decryption_algorithm = ""
 
-@app.route("/process_form", methods=['GET', 'POST'])
+
+@app.route("/process_form", methods=['POST'])
 def process_form():
+
+    global encryption_algorithm
+    global decryption_algorithm
     
     decrypt_alg = "LFSR"
     encrypt_alg = "LFSR"
@@ -26,9 +30,11 @@ def process_form():
 
         if 'encryption_select' in request.form:
             encrypt_alg = request_dict['encryption_select']
+            print(encrypt_alg)
  
         elif 'decryption_select' in request.form:
             decrypt_alg = request_dict['decryption_select']
+            print(decrypt_alg)
     
     crypto_list = ['LFSR', 'AES', 'Symmetric Authenticated Cryptography']
 
@@ -37,21 +43,25 @@ def process_form():
     decryption_algorithm = decrypt_alg
 
     return render_template('index.html', encrypt_alg=encrypt_alg, decrypt_alg=decrypt_alg, crypto_list=crypto_list)
-
-
+ 
 @app.route("/", methods=['GET', 'POST'])
-def encrypt():
-    
+def encrypt_decrypt():
+    global encryption_algorithm
+    global decryption_algorithm
+
     if request.method == 'POST':
-        request_dict = equest.form.to_dict()
+        request_dict = request.form.to_dict()
+        print(request_dict)
 
         if 'encrypt' in request.form:
+            print("encrypt is called")
 
             text = request_dict['encrypt']
             encryptor = Encryptor()
             encrypted_text = ""
 
-            if encryption_algorithm is "LFSR":
+            print(encryption_algorithm)
+            if encryption_algorithm == "LFSR":
             
                 encrypted_text = encryptor.encrypt_LFSR(text)
                 seed = encryptor.seed
@@ -62,7 +72,7 @@ def encrypt():
                 else:
                     flash('Error: All the form fields are required. ', 'encrypt')
 
-            elif encryption_algorithm is "AES":
+            elif encryption_algorithm == "AES":
     
                 encrypted_text = encryptor.encrypt_AES(text)
                 key = encryptor.AES_key
@@ -77,29 +87,49 @@ def encrypt():
                 key = encryptor.key
 
                 if len(text) > 0:
-                    flash('Encryption Result: {}\n Seed:\n {} Tap: {} '.format(encrypted_text, key) , 'encrypt')
+                    flash('Encryption Result: {}\n Key: {}\n '.format(encrypted_text, key) , 'encrypt')
                 else:
                     flash('Error: All the form fields are required. ', 'encrypt')
     
         else:
-            
-            text = request_dict['decrypt']
-            print(text)
+            text = request_dict['decrypt']           
+            print("decrypt is called")
 
-            seed = '' # user needs to provide seed online as well
-            tap = 0 # user needs to provide tap position as well
-            
-            decrypted = Encryptor.decrypt_with_lfsr(seed, tap, text)
-            decrypt_form = decrypt_form2
-            # if decrypt_form.validate():
-            if len(text) > 0:
-                flash('Decryption Result:' + decrypted, 'decrypt')
+            if encryption_algorithm is "LFSR":
+        
+                seed = request_dict['seed']
+                tap = request_dict['tap']
+
+                decrypted = Encryptor.decrypt_with_lfsr(seed, int(tap), text)
+               
+                if len(text) > 0:
+                    flash('Decryption Result: {}\n'.format(encrypted_text) , 'decrypt')
+                else:
+                    flash('Error: All the form fields are required. ', 'decrypt')
+
+            elif encryption_algorithm is "AES":
+
+                key = request_dict['key']
+                decrypted = Encryptor.decrypt_with_aes(key, text)
+
+                if len(text) > 0:
+                    flash('Decryption Result: {}\n'.format(decrypted) , 'decrypt')
+                else:
+                    flash('Error: All the form fields are required. ', 'decrypt')
+
             else:
-                flash('Error: All the form fields are required. ', 'decrypt')
-            encrypt_form = None
+
+                key = request_dict['key']
+                decrypted = Encryptor.decrypt_with_sac(key, text)
+
+                if len(text) > 0:
+                    flash('Decryption Result: {}\n'.format(decrypted) , 'decrypt')
+                else:
+                    flash('Error: All the form fields are required. ', 'decrypt')
+    
     
     crypto_list = ['LFSR', 'AES', 'Symmetric Authenticated Cryptography']
-    return render_template('index.html', decrypt_alg=decrypt_alg, crypto_list=crypto_list)
+    return render_template('index.html', encrypt_alg=encryption_algorithm, decrypt_alg=encryption_algorithm, crypto_list=crypto_list)
 
 
 def main():
