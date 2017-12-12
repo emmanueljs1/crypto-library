@@ -19,11 +19,7 @@
     <button type="submit" class="btn btn-success">Encrypt</button>
   </form>
   <br>
-  <div>
-    {% for key, value in encr_result.items() %}
-      <div>{{ key }}: {{ value }}</div>
-    {% endfor %}
-  </div>
+
     {% with messages = get_flashed_messages(category_filter=['encrypt']) %}
         {% if messages %}
 
