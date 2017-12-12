@@ -31,3 +31,5 @@ and whenever you want to encrypt a string make an Encryptor object and use
 any of its encrypt_* methods
 
 -- Additional notes --
+
+The project is forward compatible (was not during demo)
