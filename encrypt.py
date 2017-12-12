@@ -6,6 +6,7 @@ Created on Sun Dec 10 17:49:22 2017
 
 from random import randint
 from cryptography.fernet import Fernet
+from base64 import b64encode, b64decode
 from Crypto.Cipher import AES
 
 
@@ -58,13 +59,13 @@ class Encryptor(object):
         for _ in range(16 - padding):
             padded_s += ' '
         cipher = AES.new(AES_key, AES.MODE_CBC, 'This is an IV456')
-        return cipher.encrypt(padded_s)
+        return b64encode(cipher.encrypt(padded_s)).decode('utf-8')
 
     @classmethod
     def decrypt_with_aes(cls, AES_key, s):
         ''' decrypts using AES with given key '''
         cipher = AES.new(AES_key, AES.MODE_CBC, 'This is an IV456')
-        return cipher.decrypt(s).decode('utf-8')
+        return cipher.decrypt(b64decode(s)).decode('utf-8').strip()
 
     def encrypt_AES(self, s):
         ''' encrypts the string s using encryptor's AES '''
@@ -178,7 +179,7 @@ class Encryptor(object):
 
 if __name__ == '__main__':
     encryptor = Encryptor()
-    s = "hello"
+    s = "hey"
     print(s, end=" ")
     SAC_token = encryptor.encrypt(s)
     print("encrypts to '{}'".format(SAC_token), end=" ")
