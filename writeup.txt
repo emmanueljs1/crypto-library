@@ -1,0 +1,33 @@
+-- Modules used (with non-exhaustive line number references) --
+
+randint from random: encrypt.py; lines 17, 21, 24, 29
+
+Flask, render_template, flash, request: main.py; all over 
+
+reduce from functools: main.py, line 73
+
+-- Name and location of custom class --
+
+    Encryptor; encrypt.py
+
+-- Location and description of generator or decorator --
+
+    Generator: Encryptor has a pseudorandom_bits generator
+    Decorator: Encryptor has a few `classmethod`s for encrypting/decrypting
+
+-- Brief synopsis of your project's features --
+
+    Our project is Crypto Library! This is essentially a Python library that 
+    you can use to encrypt strings; featuring a web app written using flask for 
+    encrypting / decrypting strings without having to write any Python code 
+    (if you're into that sort of stuff). The library allows the user to
+    encrypt a stirng one of three ways: using symmetric authentic cryptography,
+    AES, or a simple LFSR algorithm based on CIS 110's homework 06.
+
+-- How to launch / operate your project --
+
+`python main.py` and then go to link on terminal ; or just write some code
+and whenever you want to encrypt a string make an Encryptor object and use
+any of its encrypt_* methods
+
+-- Additional notes --
