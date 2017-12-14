@@ -28,9 +28,9 @@ Run the web app for encrypting / decrypting text
 Library file for text encryption algorithms
 
 <h2>Dependencies</h2>
-- Flask
-- pycrypto
-- cryptography
+- Flask <br>
+- pycrypto <br>
+- cryptography <br>
 
 <h2>Acknowledgements</h2>
 
