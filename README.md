@@ -27,7 +27,7 @@ Run the web app for encrypting / decrypting text
 
 Library file for text encryption algorithms
 
-<i>templates/<i>
+<i>templates/</i>
 
 Contains HTML templates and CSS file for web app
 
