@@ -1,7 +1,0 @@
-setup.py
-Crypto_Library.egg-info/PKG-INFO
-Crypto_Library.egg-info/SOURCES.txt
-Crypto_Library.egg-info/dependency_links.txt
-Crypto_Library.egg-info/not-zip-safe
-Crypto_Library.egg-info/requires.txt
-Crypto_Library.egg-info/top_level.txt

@@ -1,8 +1,8 @@
 <h1>Crypto Library</h1>
 
-This is essentially a Python library that 
-you can use to encrypt strings; featuring a web app written using Flask for 
-encrypting / decrypting strings without having to write any Python code 
+This is essentially a Python library that
+you can use to encrypt strings; featuring a web app written using Flask for
+encrypting / decrypting strings without having to write any Python code
 (if you're into that sort of stuff). The library allows the user to
 encrypt a stirng one of three ways: using symmetric authentic cryptography,
 AES, or a simple LFSR algorithm
@@ -27,6 +27,10 @@ Run the web app for encrypting / decrypting text
 
 Library file for text encryption algorithms
 
+<i>templates/<i>
+
+Contains HTML templates and CSS file for web app
+
 <h2>Dependencies</h2>
 - Flask <br>
 - pycrypto <br>
@@ -36,5 +40,3 @@ Library file for text encryption algorithms
 
 This was a final project for CIS 192 at the University of Pennsylvania.
 https://www.cis.upenn.edu/~cis192/
-
-    
